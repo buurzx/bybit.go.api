@@ -1,4 +1,4 @@
-module github.com/wuhewuhe/bybit.go.api
+module github.com/buurzx/bybit.go.api
 
 go 1.21
 
@@ -6,6 +6,7 @@ require (
 	github.com/google/uuid v1.4.0
 	github.com/gorilla/websocket v1.5.1
 	github.com/stretchr/testify v1.8.4
+	github.com/wuhewuhe/bybit.go.api v1.0.0
 )
 
 require (
