@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/wuhewuhe/bybit.go.api/handlers"
 	"net/http"
+
+	"github.com/buurzx/bybit.go.api/handlers"
 )
 
 type SpotMarginClient struct {

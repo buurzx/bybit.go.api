@@ -6,9 +6,10 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
-	"time"
 )
 
 type MessageHandler func(message string) error

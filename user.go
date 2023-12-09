@@ -3,8 +3,9 @@ package bybit_connector
 import (
 	"context"
 	"encoding/json"
-	"github.com/wuhewuhe/bybit.go.api/handlers"
 	"net/http"
+
+	"github.com/buurzx/bybit.go.api/handlers"
 )
 
 type UserServiceClient struct {

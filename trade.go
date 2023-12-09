@@ -3,9 +3,10 @@ package bybit_connector
 import (
 	"context"
 	"encoding/json"
-	"github.com/wuhewuhe/bybit.go.api/handlers"
-	"github.com/wuhewuhe/bybit.go.api/models"
 	"net/http"
+
+	"github.com/buurzx/bybit.go.api/handlers"
+	"github.com/buurzx/bybit.go.api/models"
 )
 
 type TradeClient struct {
