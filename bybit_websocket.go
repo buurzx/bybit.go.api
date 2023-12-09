@@ -19,6 +19,8 @@ func (b *WebSocket) handleIncomingMessages() {
 		_, message, err := b.conn.ReadMessage()
 		if err != nil {
 			fmt.Println("Error reading:", err)
+
+			b.Disconnect()
 			return
 		}
 
@@ -44,13 +46,14 @@ type WebSocket struct {
 	onMessage MessageHandler
 }
 
-func NewBybitPrivateWebSocket(url, apiKey, apiSecret string, handler MessageHandler) *WebSocket {
+func NewBybitPrivateWebSocket(url, apiKey, apiSecret string, handler MessageHandler) (*WebSocket, chan struct{}) {
+	errCh := make(chan struct{})
 	return &WebSocket{
 		url:       url,
 		apiKey:    apiKey,
 		apiSecret: apiSecret,
 		onMessage: handler,
-	}
+	}, errCh
 }
 
 func NewBybitPublicWebSocket(url string, handler MessageHandler) *WebSocket {
@@ -96,7 +99,12 @@ func Ping(b *WebSocket) {
 }
 
 func (b *WebSocket) Disconnect() error {
-	return b.conn.Close()
+	err := b.conn.Close()
+	if err == nil {
+		fmt.Println("WebSocket disconnected:", err)
+	}
+
+	return err
 }
 
 func (b *WebSocket) Send(message string) error {
