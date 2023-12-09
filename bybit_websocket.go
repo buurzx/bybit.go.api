@@ -20,7 +20,7 @@ func (b *WebSocket) handleIncomingMessages() {
 		if err != nil {
 			fmt.Println("Error reading:", err)
 
-			b.Disconnect()
+			b.errCh <- struct{}{}
 			return
 		}
 
@@ -44,6 +44,7 @@ type WebSocket struct {
 	apiKey    string
 	apiSecret string
 	onMessage MessageHandler
+	errCh     chan struct{}
 }
 
 func NewBybitPrivateWebSocket(url, apiKey, apiSecret string, handler MessageHandler) (*WebSocket, chan struct{}) {
@@ -53,6 +54,7 @@ func NewBybitPrivateWebSocket(url, apiKey, apiSecret string, handler MessageHand
 		apiKey:    apiKey,
 		apiSecret: apiSecret,
 		onMessage: handler,
+		errCh:     errCh,
 	}, errCh
 }
 
@@ -92,6 +94,7 @@ func Ping(b *WebSocket) {
 			case <-ticker.C: // Wait until the ticker sends a signal
 				if err := b.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 					fmt.Println("Failed to send ping:", err)
+					return
 				}
 			}
 		}
@@ -99,12 +102,7 @@ func Ping(b *WebSocket) {
 }
 
 func (b *WebSocket) Disconnect() error {
-	err := b.conn.Close()
-	if err == nil {
-		fmt.Println("WebSocket disconnected:", err)
-	}
-
-	return err
+	return b.conn.Close()
 }
 
 func (b *WebSocket) Send(message string) error {
