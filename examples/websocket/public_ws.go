@@ -7,10 +7,14 @@ import (
 )
 
 func main() {
-	ws := bybit.NewBybitPublicWebSocket("wss://stream.bybit.com/v5/public/spot", func(message string) error {
+	ws, errCh := bybit.NewBybitPublicWebSocket("wss://stream.bybit.com/v5/public/spot", func(message string) error {
 		fmt.Println("Received:", message)
 		return nil
 	})
 	_ = ws.Connect([]string{"orderbook.1.BTCUSDT"})
-	select {}
+	select {
+	case <-errCh:
+		ws.Disconnect()
+		ws.Connect([]string{"orderbook.1.BTCUSDT"})
+	}
 }

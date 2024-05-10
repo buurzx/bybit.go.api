@@ -58,11 +58,13 @@ func NewBybitPrivateWebSocket(url, apiKey, apiSecret string, handler MessageHand
 	}, errCh
 }
 
-func NewBybitPublicWebSocket(url string, handler MessageHandler) *WebSocket {
+func NewBybitPublicWebSocket(url string, handler MessageHandler) (*WebSocket, chan struct{}) {
+	errCh := make(chan struct{})
 	return &WebSocket{
 		url:       url,
 		onMessage: handler,
-	}
+		errCh:     errCh,
+	}, errCh
 }
 
 func (b *WebSocket) Connect(args []string) error {
@@ -80,12 +82,12 @@ func (b *WebSocket) Connect(args []string) error {
 
 	go b.handleIncomingMessages()
 
-	Ping(b)
+	b.ping()
 
 	return b.sendSubscription(args)
 }
 
-func Ping(b *WebSocket) {
+func (b *WebSocket) ping() {
 	ticker := time.NewTicker(15 * time.Second)
 	go func() {
 		defer ticker.Stop() // Ensure the ticker is stopped when this goroutine ends
@@ -94,6 +96,8 @@ func Ping(b *WebSocket) {
 			case <-ticker.C: // Wait until the ticker sends a signal
 				if err := b.conn.WriteMessage(websocket.PingMessage, nil); err != nil {
 					fmt.Println("Failed to send ping:", err)
+					b.errCh <- struct{}{}
+
 					return
 				}
 			}

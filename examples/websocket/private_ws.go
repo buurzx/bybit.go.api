@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	ws := bybit.NewBybitPrivateWebSocket("wss://stream-testnet.bybit.com/v5/private", "YOUR_API_KEY", "YOUR_API_SECRET", func(message string) error {
+	ws, _ := bybit.NewBybitPrivateWebSocket("wss://stream-testnet.bybit.com/v5/private", "YOUR_API_KEY", "YOUR_API_SECRET", func(message string) error {
 		fmt.Println("Received:", message)
 		return nil
 	})
